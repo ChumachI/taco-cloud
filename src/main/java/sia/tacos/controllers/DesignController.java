@@ -22,6 +22,7 @@ import sia.tacos.entities.TacoOrder;
 @SessionAttributes("tacoOrder")
 public class DesignController {
 
+    @SuppressWarnings("null")
     @ModelAttribute
     public void addIngredientsToModel(Model model){
         List<Ingredient> ingredients = Arrays.asList(
