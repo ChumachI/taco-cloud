@@ -1,4 +1,4 @@
-package sia.tacos.entity;
+package sia.tacos.entities;
 
 import java.util.ArrayList;
 import java.util.List;
