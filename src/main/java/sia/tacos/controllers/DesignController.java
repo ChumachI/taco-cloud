@@ -2,6 +2,7 @@ package sia.tacos.controllers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +24,6 @@ import sia.tacos.entities.TacoOrder;
 @SessionAttributes("tacoOrder")
 public class DesignController {
 
-    @SuppressWarnings("null")
     @ModelAttribute
     public void addIngredientsToModel(Model model){
         List<Ingredient> ingredients = Arrays.asList(
@@ -71,7 +71,7 @@ public class DesignController {
         return ingredients
             .stream()
             .filter(x -> x.getType().equals(type))
-            .toList();
+            .collect(Collectors.toList());
     }
     
 }
