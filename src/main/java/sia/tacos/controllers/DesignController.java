@@ -1,9 +1,10 @@
 package sia.tacos.controllers;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -19,6 +20,7 @@ import sia.tacos.entities.Ingredient;
 import sia.tacos.entities.Ingredient.Type;
 import sia.tacos.entities.Taco;
 import sia.tacos.entities.TacoOrder;
+import sia.tacos.repositories.IngredientRepository;
 
 @Slf4j
 @Controller
@@ -26,22 +28,19 @@ import sia.tacos.entities.TacoOrder;
 @SessionAttributes("tacoOrder")
 public class DesignController {
 
+    private final IngredientRepository ingredientRepository;
+
+    @Autowired
+    public DesignController(IngredientRepository ingredientRepository){
+        this.ingredientRepository = ingredientRepository;
+    }
+    
+
     @SuppressWarnings("null")
     @ModelAttribute
     public void addIngredientsToModel(Model model){
-        List<Ingredient> ingredients = Arrays.asList(
-            new Ingredient("FLTO", "Flour Tortilla", Type.WRAP),
-            new Ingredient("COTO", "Corn Tortilla", Type.WRAP),
-            new Ingredient("GRBF", "Ground Beef", Type.PROTEIN),
-            new Ingredient("CARN", "Carnitas", Type.PROTEIN),
-            new Ingredient("TMTO", "Diced Tomatoes", Type.VEGGIES),
-            new Ingredient("LETC", "Lettuce", Type.VEGGIES),
-            new Ingredient("CHED", "Cheddar", Type.CHEESE),
-            new Ingredient("JACK", "Monterrey Jack", Type.CHEESE),
-            new Ingredient("SLSA", "Salsa", Type.SAUCE),
-            new Ingredient("SRCR", "Sour Cream", Type.SAUCE)
-        );
-
+        Iterable<Ingredient> ingredients = ingredientRepository.findAll();
+        
         Type[] types = Ingredient.Type.values();
         for(Type type: types){
             model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
@@ -73,11 +72,16 @@ public class DesignController {
         return "redirect:/orders/current";
     }
 
-    private Iterable<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
-        return ingredients
-            .stream()
-            .filter(x -> x.getType().equals(type))
-            .collect(Collectors.toList());
+    private Iterable<Ingredient> filterByType(Iterable<Ingredient> ingredients, Type type) {
+        List<Ingredient> result = new ArrayList<>();
+        Iterator<Ingredient> iterator = ingredients.iterator();
+        while (iterator.hasNext()) {
+            Ingredient current = iterator.next();
+            if(current.getType().equals(type)){
+                result.add(current);
+            }
+        }
+        return result;
     }
     
 }
